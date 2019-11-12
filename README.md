@@ -26,10 +26,10 @@ Following Xi's [design decisions](https://github.com/xi-editor/xi-editor#design-
 * **Functional core, imperative shell** 
 * **Programming in data** 
 
-The front end is rendering a UI derived from the events (facts) it has received. The front end should never block, and is modelled to be eventually consistent.
+The front end renders a UI derived from the events (facts) it has received. The front end should never block, and is modelled to be eventually consistent.
 
 * This design plays to Clojure's strengths greatly, where data comes first!
-* This design makes the limitations of the "single-threaded event loop" model of the JS runtime a bit easier to accept.
+* This design makes the limiting "single-threaded event loop" model of the JS runtime a bit easier to accept.
 * This architecture leverages a reasonably expressive back end language (Swift) for its "imperative shell"
 
 # Getting started
