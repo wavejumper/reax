@@ -94,7 +94,7 @@ enum MyEventRouter: String, Codable, ReaxEventRouter {
   func routeEvent() -> ((_ ctx: Context, _ from: Data) -> Either<Result, ReaxError>) {
     switch self {
     case .getUser:
-      return mutationFactory(GetUserHandler.self)
+      return eventHandler(GetUserHandler.self)
     }
   }
 }
@@ -104,7 +104,8 @@ In this example we have defined a single event, `getUser`, which maps to the `Ge
 
 The signature for `routeEvent` returns a closure, which then returns the result.
 
-The `mutationFactory` fn is a helper function that returns a closure that decodes, and invokes the event handler. This fn also neatly handles any deserialization errors.
+`eventHandler` is a helper fn that returns a closure that decodes, and invokes the event handler. This fn also neatly handles any deserialization errors.
+
 This makes makes the router incredibly succicent for most use cases. The router should only care about matching event id's to event handlers!
 
 ## Event handlers
