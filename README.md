@@ -92,14 +92,14 @@ enum MyEventRouter: String, Codable, ReaxEventRouter {
 
   func routeEvent() -> ((_ ctx: Context, _ from: Data) -> Either<Result, ReaxError>) {
     switch self {
-    case .myEvent:
+    case .getUser:
       return mutationFactory(GetUserHandler.self)
     }
   }
 }
 ```
 
-In this example we have defined a single event, `getUser`, which maps to the struct `GetUserHandler` (defined below). 
+In this example we have defined a single event, `getUser`, which maps to the `GetUserHandler` (defined below). 
 
 The signature for `routeEvent` returns a closure, which then returns the result.
 
@@ -125,7 +125,7 @@ struct GetUserHandler: Codable, ReaxMutation {
 
 ## Context and results
 
-The two `typealias` arguments both `ReaxEventRouter` and `ReaxEventHandler` must provide allow for customised context and results for each Reax module.
+These are two `typealias` arguments both `ReaxEventRouter` and `ReaxEventHandler` must provide to allow for customised context and results.
 
 ### Context
 
@@ -147,7 +147,7 @@ struct MyContext: ReaxContext {
 
 ### Result
 
-The `Result` alias is the value the Reax module sends to the front end. It can be represented as anything `Encodable`, and is generally a struct, or enum.
+The `Result` typealias is the value the Reax module sends to the front end. It can be represented as anything `Encodable`, and is generally a struct, or enum.
 
 ```swift 
 struct MyResult {
@@ -156,13 +156,13 @@ struct MyResult {
 }
 ```
 
-### Reax errors
+## Reax errors
 
 In the case of handling errors, the `ReaxError` enum is returned to the user.
 
 ## ReaxEventEmitter
 
-The final piece of the puzzle is the `ReaxEventEmitter` class, which is what the front end interacts with. This class is a subclass of `RCTEventEmitter`. 
+Finally, the `ReaxEventEmitter` class is what the front end interacts with. This class is a subclass of `RCTEventEmitter`. 
 
 A skeloton Reax class looks like this:
 
@@ -194,13 +194,13 @@ class Midi: ReaxEventEmitter {
 
 ### dispatch
 
-This method gets called when the front end sends an event to the module. There is a public `invoke` method on the `ReaxEventEmitter` class which neatly handles all deserialization and responding. 
+This method gets called when the front end sends an event to the module. There is a public `invoke` method on the `ReaxEventEmitter` class which neatly handles all deserialization, serialization and responding. 
 
 ### Other helper methods
 
-The `ReaxEventEmitter` class contains one useful method, `channelFactory` for constructing channels out of the modules concrete `Result` type.
+The `ReaxEventEmitter` class contains one useful method, `channelFactory` for constructing 'channels' out of the modules concrete `Result` type.
 
-This can be used for dispatching results to the front end asynchronously, triggered by [Key-Value Observing](https://nshipster.com/key-value-observing/)
+This can be used for dispatching results to the front end asynchronously, eg some event triggered by [Key-Value Observing](https://nshipster.com/key-value-observing/)
 
 ### Boilerplate
 
@@ -225,7 +225,7 @@ All `ReaxEventEmitter` classes have to implement `start` and `stop` methods, whi
 
 These two methods are how you manage the lifecycle of stateful Reax modules, eg setting up `Context`.
 
-The pattern means that both configuration and lifecycle management should come from a centralized location: your front-end (eg, via [integrant](https://github.com/weavejester/integrant)).
+This pattern means that both configuration and lifecycle management should come from a centralized location: your front-end (eg, via [integrant](https://github.com/weavejester/integrant)).
 
 If you need more custom dependency injection, you can always implement the [RCTBridgeDelegate protocol](https://facebook.github.io/react-native/docs/native-modules-ios#dependency-injection)
 
@@ -249,7 +249,7 @@ Within your integrant config, you can define a Reax module like so:
 (defn config []
   {:app/db {}
    :link/handler {:db      (ig/ref :app/db)
-                  :handler link-handler} ;; <--- implementation explained in next section
+                  :handler link/handler} ;; <--- implementation explained in next section
    [:reax/module :reax/link] {:class-name     "Link"
                               :event-listener (ig/ref :link/handler}})
 ```
@@ -281,7 +281,7 @@ A good pattern is to implement an event handler `init-key` that has a dependency
 (ns example.link
   (:require [integrant.core :as ig]))
 
-(defn link-handler [db event]
+(defn handler [db event]
   (assoc db :my-event event))
 
 (defmethod ig/init-key :app/handler [_ {:keys [db handler]}]
