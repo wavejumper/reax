@@ -5,6 +5,7 @@
 Event driven RPC between a Swift backend and a Clojurescript front end. Influenced by the Xi-editor.
 
 **Note:** API is subject to change as I experiment implementing it within my own application.
+**Note:** also a WIP. I am writing the documentation before I finish publishing the code :p
 
 # Prior reading
 
