@@ -273,7 +273,7 @@ This is how you send events to your Reax module:
 
 All serialization will be taken care of!
 
-### Result handlers
+### Event handlers
 
 Generally you will want to react to incoming events (eg, by mutating some app state).
 
