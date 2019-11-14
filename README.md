@@ -106,7 +106,7 @@ The signature for `routeEvent` returns a closure, which then returns the result.
 
 `eventHandler` is a helper fn that returns a closure that decodes, and invokes the event handler. This fn also neatly handles any deserialization errors.
 
-This makes makes the router incredibly succicent for most use cases. The router should only care about matching event id's to event handlers!
+The router is succinct for most use cases. The router should only care about matching event id's to event handlers.
 
 ## Event handlers
 
