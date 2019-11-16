@@ -57,7 +57,7 @@ wavejumper/reax {:mvn/version "1.1.0"}
 Add this dependency to your projects `ios/Podfile` file:
 
 ```ruby
-pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.0.0'
+pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.1.0'
 ```
 
 # Using the library
