@@ -40,7 +40,7 @@ This project assumes you have a React Native project targetting `ios` and a tool
 
 Your project needs to be able to support native modules. If you are using Expo, you will need to [eject to ExpoKit](https://docs.expo.io/versions/latest/expokit/eject/).
 
-Please check this [example](#) project for reference.
+Please check this [example](https://github.com/wavejumper/reax/tree/master/examples/synth) project for reference.
 
 Reax ships with no transitive dependencies. The front end optionally depends on [integrant](https://github.com/weavejester/integrant), though you can use any library for managing app state.
 
