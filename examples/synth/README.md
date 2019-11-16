@@ -12,7 +12,7 @@ It is built using:
 * [reax](https://github.com/wavejumper/reax) for event-driven Swift modules
 
 
-![image](https://i.imgur.com/0oaPUTl.png =332x645)
+![image](https://i.imgur.com/0oaPUTl.png | width=332 | height=645)
 
 
 Running:
