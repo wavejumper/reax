@@ -172,7 +172,7 @@
     (js/console.log (str "Re-rendering root component: " n))
     (rehook-dom/bootstrap ctx identity clj->js app)))
 
-(defn ^:dev/after-load render []
+(defn ^:dev/after-load reload []
   (swap! reload-trigger inc))
 
 (defn main []
