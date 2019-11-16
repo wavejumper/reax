@@ -27,7 +27,7 @@
   (fn [event]
     (swap! db handler event)))
 
-(defn opengps-result-handler
+(defn synth-result-handler
   [db event]
 
   )
@@ -35,7 +35,7 @@
 (defmethod ig/init-key :app/db-handler [_ {:keys [db handler]}]
   (wrap-db db handler))
 
-(defn opengps-error-handler
+(defn synth-error-handler
   [db event]
 
   )
@@ -48,17 +48,17 @@
 
 (defn config []
   {:app/db {}
-   [:app/db-handler :opengps/result-handler] {:db (ig/ref :app/db)
-                                              :handler opengps-result-handler}
-   [:app/db-handler :opengps/error-handler] {:db (ig/ref :app/db)
-                                             :handler opengps-error-handler}
+   [:app/db-handler :synth/result-handler] {:db (ig/ref :app/db)
+                                              :handler synth-result-handler}
+   [:app/db-handler :synth/error-handler] {:db (ig/ref :app/db)
+                                             :handler synth-error-handler}
    :rehook/reframe {:db  (ig/ref :app/db)
-                    :ctx {:opengps (ig/ref :reax/opengps)}
+                    :ctx {:synth (ig/ref :reax/synth)}
                     :subscriptions subscriptions
                     :events events}
-   [:reax/module :reax/opengps] {:class-name     "OpenGps"
-                                 :result-handler (ig/ref :opengps/result-handler)
-                                 :error-handler  (ig/ref :opengps/error-handler)}})
+   [:reax/module :reax/synth] {:class-name     "Synth"
+                                 :result-handler (ig/ref :synth/result-handler)
+                                 :error-handler  (ig/ref :synth/error-handler)}})
 
 (defonce system
   (atom {}))

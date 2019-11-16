@@ -1,4 +1,5 @@
 PODS:
+  - AudioKit/Core (4.9.2)
   - boost-for-react-native (1.63.0)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.61.2)
@@ -217,9 +218,12 @@ PODS:
     - React-cxxreact (= 0.61.2)
     - React-jsi (= 0.61.2)
     - ReactCommon/jscallinvoker (= 0.61.2)
+  - RNReax (1.1.0):
+    - React
   - Yoga (1.14.0)
 
 DEPENDENCIES:
+  - AudioKit/Core
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
@@ -247,10 +251,12 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - RNReax (from `https://github.com/wavejumper/RNReax`, tag `1.1.0`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
   trunk:
+    - AudioKit
     - boost-for-react-native
 
 EXTERNAL SOURCES:
@@ -302,10 +308,19 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNReax:
+    :git: https://github.com/wavejumper/RNReax
+    :tag: 1.1.0
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
+CHECKOUT OPTIONS:
+  RNReax:
+    :git: https://github.com/wavejumper/RNReax
+    :tag: 1.1.0
+
 SPEC CHECKSUMS:
+  AudioKit: ee388f0c9ad4e90b6106c14caaf809cd7ca220da
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
   FBLazyVector: 68b6a76960fbd8ecd9fb7ce0aadd3329c3340a99
@@ -331,8 +346,9 @@ SPEC CHECKSUMS:
   React-RCTText: e3ef6191cdb627855ff7fe8fa0c1e14094967fb8
   React-RCTVibration: fb54c732fd20405a76598e431aa2f8c2bf527de9
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
+  RNReax: 48596ee80d5e6f37eab59e7f93c13bff4eaeb270
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 3a5051c23ce4c9609891bafc4e1589e7e4ffdda5
+PODFILE CHECKSUM: 0ae4149600dcab48b4e9cdf19f6323212342756b
 
 COCOAPODS: 1.8.4
