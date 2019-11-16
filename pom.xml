@@ -11,7 +11,7 @@
     <url>https://github.com/wavejumper/reax</url>
     <connection>scm:git:git://github.com/wavejumper/reax.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/wavejumper/reax.git</developerConnection>
-    <tag>7fc9e9850eec6aabcfabc10e7cd77ba6e92dd153</tag>
+    <tag>baa97ddbd3146cfbe912f838471352bffecfa868</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>
