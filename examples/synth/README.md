@@ -6,7 +6,7 @@ Running:
 
 ```
 git clone git@github.com:wavejumper/reax.git
-cd reax/examples/app
+cd reax/examples/synth
 npm install -g shadow-cljs
 npm install -g react-native-cli
 npm install
