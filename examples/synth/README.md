@@ -15,7 +15,7 @@ It is built using:
 ![image](https://i.imgur.com/EDZL9C4.png)
 
 
-Running:
+# Running:
 
 ```
 git clone git@github.com:wavejumper/reax.git
