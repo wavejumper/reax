@@ -1,4 +1,4 @@
-(defproject wavejumper/reax "1.1.0"
+(defproject wavejumper/reax "1.2.0"
   :description "Event driven RPC between a Swift backend and a Clojurescript front end."
   :url "https://github.com/wavejumper/reax"
 
