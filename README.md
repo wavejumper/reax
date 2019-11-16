@@ -4,9 +4,7 @@
 
 Event driven RPC between a Swift backend and a Clojurescript front end. Influenced by the Xi-editor.
 
-**Note 1:** API is subject to change as I experiment implementing it within my own application.
-
-**Note 2:** also a WIP. I am writing the documentation before I finish publishing the code :p
+**Note:** API is subject to change as I experiment using reax within my own application.
 
 # Prior reading
 
@@ -67,7 +65,7 @@ pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.2.0'
 A Reax event looks like this: 
 
 ```clojure
-["getUser" {:userId "yoko"}]
+["setFrequency" {:frequency 400}]
 ```
 
 A Reax event can be dispatched from either Clojurescript or Swift, and are considered asynchronous.
@@ -82,27 +80,31 @@ During transport, events are represented as JSON (conveniently, thanks to the [c
 
 The Swift type system defines the schema of available events and valid arguments an event has:
 
-Anything `Decodable` is a valid event id, so long as it also implements the `ReaxEventRouter` protocol. An event id is generally represented as an enum encoded as a string.
+Anything `Decodable` is a valid event id, so long as it also implements the `ReaxRouter` protocol. An event id is generally represented as an enum encoded as a string.
 
 ```swift
-enum MyEventRouter: String, Codable, ReaxEventRouter {
-  typealias Context = MyContext
-  typealias Result = MyResult
+enum SynthRouter: String, Codable, ReaxRouter {
+  typealias Context = SynthContext
+  typealias Result = SynthResult
 
-  case getUser
+  case setFrequency
+  case startSynth
+  case stopSynth
 
   func routeEvent() -> ((_ ctx: Context, _ from: Data) -> Either<Result, ReaxError>) {
     switch self {
-    case .getUser:
-      return eventHandler(GetUserHandler.self)
+    case .setFrequency:
+      return eventHandler(SetFrequncyHandler.self)
+    case .stopSynth:
+      return eventHandler(StopSynthHandler.self)
+    case .startSynth:
+      return eventHandler(StartSynthHandler.self)
     }
   }
 }
 ```
 
-In this example we have defined a single event, `getUser`, which maps to the `GetUserHandler` (defined below). 
-
-The signature for `routeEvent` returns a closure, which then returns the result.
+In this example `setFrequency` maps to the `SetFrequencyHandler` (defined below). 
 
 `eventHandler` is a helper fn that returns a closure that decodes, and invokes the event handler. This fn also neatly handles any deserialization errors.
 
@@ -110,24 +112,25 @@ The router is succinct for most use cases. The router should only care about mat
 
 ## Event handlers
 
-Event handlers are represented with the `ReaxEventHandler` protocol. Similar to event ids, anything that implements the `Decodable` protocol is a valid handler. A handler is generally represented as a struct.
+Event handlers are represented with the `ReaxHandler` protocol. Similar to event ids, anything that implements the `Decodable` protocol is a valid handler. A handler is generally represented as a struct.
 
 ```swift
-struct GetUserHandler: Codable, ReaxMutation {
-  typealias Context = MyContext
-  typealias Result = MyResult
+struct SetFrequncyHandler: Codable, ReaxHandler {
+  typealias Context = SynthContext
+  typealias Result = SynthResult
 
-  var userId: String
+  var frequency: Double
 
   func invoke(ctx: Context) -> Either<Result, ReaxError> {
-    return Either.Left(ctx.pool.getUser(userId))
+    ctx.oscillator.frequency = frequency
+    return Either.left(ctx.status())
   }
 }
 ```
 
 ## Context and results
 
-These are two `typealias` arguments both `ReaxEventRouter` and `ReaxEventHandler` must provide to allow for customised context and results.
+These are two `typealias` arguments both `ReaxRouter` and `ReaxHandler` must provide to allow for customised context and results.
 
 ### Context
 
@@ -136,13 +139,11 @@ The `Context` typealias allows the end user to define required components  (eg, 
 `Context` can be any data structure implementing the `ReaxContext` protocol. They are generally structs.
 
 ```swift
-struct MyContext: ReaxContext {
-
-  var pool: Database
-  var channel:  ((_ ctx: Context, _ from: Data) -> Either<MyResult, ReaxError>)
-
+struct SynthContext: ReaxContext {
+  var oscillator: AKOscillator
+  
   func state() -> ReaxContextState {
-    return ReaxContextState.Started
+    return ReaxContextState.started
   }
 }
 ```
@@ -152,9 +153,8 @@ struct MyContext: ReaxContext {
 The `Result` typealias is the value the Reax module sends to the front end. It can be represented as anything `Encodable`, and is generally a struct, or enum.
 
 ```swift 
-struct MyResult {
-  var name: String
-  var userId: String
+struct SynthResult: Codable {
+  var started: Bool
 }
 ```
 
@@ -169,34 +169,37 @@ Finally, the `ReaxEventEmitter` class is what the front end interacts with. This
 A skeloton Reax class looks like this:
 
 ```swift 
-@objc(Midi)
-class Midi: ReaxEventEmitter {
-  var ctx = MidiContext()
+@objc(Synth)
+class Synth: ReaxEventEmitter {
+  var ctx = SynthContext(oscillator: AKOscillator())
   
-  @objc
-  func start() {
-    logger.info("Starting MIDI")
-    let deviceManager = DeviceManager()
-    let observations = deviceManager.initSubscriptions()
-    self.ctx = MidiContext(deviceManager: deviceManager, observations: observations)
+  // This shouldn't have to be provided by impls, seems like there is an odd bug
+  // with debug builds of React Native...
+  override func supportedEvents() -> [String]! {
+    return [self.errorType(), self.resultType()]
   }
   
   @objc
+  func start() {
+    AudioKit.output = self.ctx.oscillator
+    try! AudioKit.start()
+  }
+
+  @objc
   func stop() {
-    // TODO: implement shutdown hooks for compoents
-    self.ctx = MidiContext()
+    try! AudioKit.stop()
   }
   
   @objc(dispatch:args:)
   func dispatch(id: NSString, args: NSString) {
-    self.invoke(MyEventRouter.self, ctx: self.ctx, id: id as String, args: args as String)
+    self.invoke(SynthRouter.self, ctx: self.ctx, id: id as String, args: args as String)
   }
 }
 ```
 
 ### dispatch
 
-This method gets called when the front end sends an event to the module. There is a public `invoke` method on the `ReaxEventEmitter` class which neatly handles all deserialization, serialization and responding. 
+This method gets called when the front end sends an event to the module.
 
 ### Other helper methods
 
@@ -212,7 +215,7 @@ A `<ModuleName.m>` file will also have to be created, exposing the module to the
 #import "React/RCTBridgeModule.h"
 #import "React/RCTEventEmitter.h"
 
-@interface RCT_EXTERN_MODULE(Midi, RCTEventEmitter)
+@interface RCT_EXTERN_MODULE(Synth, RCTEventEmitter)
 
 RCT_EXTERN_METHOD(start)
 RCT_EXTERN_METHOD(stop)
@@ -248,48 +251,56 @@ Within your integrant config, you can define a Reax module like so:
 (defmethod ig/init-key :app/db [_ init-value]
   (atom init-value))
 
+(defn synth-result-handler
+  [db event]
+  (assoc db :synth/state event))
+
+(defn synth-error-handler
+  [db event]
+  (js/console.warn "Synth error" (pr-str event))
+  db)
+
+(defn wrap-db [db handler]
+  (fn [event]
+    (swap! db handler event)))
+
+(defmethod ig/init-key :app/db-handler [_ {:keys [db handler]}]
+  (wrap-db db handler))
+
 (defn config []
-  {:app/db {}
-   :link/handler {:db      (ig/ref :app/db)
-                  :handler link/handler} ;; <--- implementation explained in next section
-   [:reax/module :reax/link] {:class-name     "Link"
-                              :event-listener (ig/ref :link/handler}})
+  {;; The atom housing our application state.
+   :app/db                                 {} ;; <--- initial app state
+
+   ;; The result handler for our synth
+   [:app/db-handler :synth/result-handler] {:db      (ig/ref :app/db)
+                                            :handler synth-result-handler}
+
+   ;; The error handler for our synth
+   [:app/db-handler :synth/error-handler]  {:db      (ig/ref :app/db)
+                                            :handler synth-error-handler}
+
+   ;; A reax module for our synth
+   [:reax/module :reax/synth]              {:class-name     "Synth" ;; <-- the objc class of our reax module
+                                            :result-handler (ig/ref :synth/result-handler)
+                                            :error-handler  (ig/ref :synth/error-handler)}})
+
 ```
 
-It accepts three keys:
+`:reax/module` accepts three keys:
 
-* `:class-name`: the name of the Reax class
+* `:class-name`: the name of the Reax objc class
 * `:result-handler`: a function that handles all Reax results
 * `:error-handler`: a function that handles all Reax errors
-
-The returned value from the integrant component will be a map containing a `:dispatch` key. 
 
 This is how you send events to your Reax module:
 
 ```clojure
-(let [{:keys [dispatch]} reax-module]
-  (dispatch "getUser" {:userId "Yoko"}))
+(require '[reax.core :as reax])
+
+(reax/dispatch module "setFrequency" {:frequency 400})
 ```
 
 All serialization will be taken care of!
-
-### Event handlers
-
-Generally you will want to react to incoming events (eg, by mutating some app state).
-
-A good pattern is to implement an event handler `init-key` that has a dependency on your `:app/db`, or whatever other context it requires:
-
-```clojure
-(ns example.link
-  (:require [integrant.core :as ig]))
-
-(defn handler [db event]
-  (assoc db :my-event event))
-
-(defmethod ig/init-key :app/handler [_ {:keys [db handler]}]
-  (fn [event]
-    (swap! db handler event)))
-```
 
 # Notes / considerations
 
