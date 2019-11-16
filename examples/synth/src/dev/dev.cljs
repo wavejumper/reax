@@ -4,7 +4,8 @@
 
 (defn reload []
   (ig/halt! @app/system)
-  (reset! app/system (ig/init (app/config))))
+  (reset! app/system (ig/init (app/config)))
+  (swap! app/reload-trigger inc))
 
 (defn subscriptions []
   (some-> app/system deref :rehook/reframe :subscriptions keys))

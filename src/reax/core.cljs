@@ -35,3 +35,6 @@
   (when error-listener
     (.remove error-listener))
   reax-module)
+
+(defn dispatch [{:keys [dispatch]} id args]
+  (dispatch id args))

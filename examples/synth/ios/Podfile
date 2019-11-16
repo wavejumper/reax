@@ -35,7 +35,7 @@ target 'app' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
   
   pod 'AudioKit/Core'
-  pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.1.0'
+  pod 'RNReax', :path => "~/Code/clojure/RNReax" 
 
   target 'appTests' do
     inherit! :search_paths

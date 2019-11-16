@@ -63,3 +63,4 @@ buck-out/
 .idea/
 .shadow-cljs/
 *.iml
+app/
