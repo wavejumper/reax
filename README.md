@@ -49,7 +49,7 @@ Reax ships with no transitive dependencies. The front end optionally depends on 
 Add this dependency to your projects `deps.edn` file:
 
 ```clojure
-wavejumper/reax {:mvn/version "1.1.0"}
+wavejumper/reax {:mvn/version "1.2.0"}
 ```
 
 ### Swift
@@ -57,7 +57,7 @@ wavejumper/reax {:mvn/version "1.1.0"}
 Add this dependency to your projects `ios/Podfile` file:
 
 ```ruby
-pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.1.0'
+pod 'RNReax', :git => 'https://github.com/wavejumper/RNReax', :tag => '1.2.0'
 ```
 
 # Using the library

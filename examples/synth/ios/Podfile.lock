@@ -220,7 +220,7 @@ PODS:
     - React-cxxreact (= 0.61.2)
     - React-jsi (= 0.61.2)
     - ReactCommon/jscallinvoker (= 0.61.2)
-  - RNReax (1.1.1):
+  - RNReax (1.2.0):
     - React
   - Yoga (1.14.0)
 
@@ -254,7 +254,7 @@ DEPENDENCIES:
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/jscallinvoker (from `../node_modules/react-native/ReactCommon`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
-  - RNReax (from `~/Code/clojure/RNReax`)
+  - RNReax (from `https://github.com/wavejumper/RNReax`, tag `1.2.0`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -314,9 +314,15 @@ EXTERNAL SOURCES:
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
   RNReax:
-    :path: "~/Code/clojure/RNReax"
+    :git: https://github.com/wavejumper/RNReax
+    :tag: 1.2.0
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
+
+CHECKOUT OPTIONS:
+  RNReax:
+    :git: https://github.com/wavejumper/RNReax
+    :tag: 1.2.0
 
 SPEC CHECKSUMS:
   AudioKit: ee388f0c9ad4e90b6106c14caaf809cd7ca220da
@@ -346,9 +352,9 @@ SPEC CHECKSUMS:
   React-RCTText: e3ef6191cdb627855ff7fe8fa0c1e14094967fb8
   React-RCTVibration: fb54c732fd20405a76598e431aa2f8c2bf527de9
   ReactCommon: 5848032ed2f274fcb40f6b9ec24067787c42d479
-  RNReax: 1a7c0e8777bf0974b56d76285f4a4af6983fb6bd
+  RNReax: 6bd5774d9a9941cfbeab87685e0319beda31fa8d
   Yoga: 14927e37bd25376d216b150ab2a561773d57911f
 
-PODFILE CHECKSUM: 5e336db5e03e086adb81ea14d1c5afefa4860184
+PODFILE CHECKSUM: 27f864b4ce5573aafe38ed4911d3e2184b976534
 
 COCOAPODS: 1.8.4
