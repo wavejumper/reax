@@ -5,6 +5,8 @@ Demo app wrapping [AudioKit](https://github.com/AudioKit/AudioKit) for a simple 
 Running:
 
 ```
+git clone git@github.com:wavejumper/reax.git
+cd reax/examples/app
 npm install -g shadow-cljs
 npm install -g react-native-cli
 npm install
