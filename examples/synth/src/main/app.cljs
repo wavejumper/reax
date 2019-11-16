@@ -20,15 +20,10 @@
                 (if-let [subscription (get subscriptions id)]
                   (first (rehook/use-atom-fn db #(subscription % args) (constantly nil)))
                   (js/console.warn (str "No subscription found for id " id))))
-
    :dispatch (fn [[id & args]]
                (if-let [handler (get events id)]
                  (swap! db #(handler % ctx args))
                  (js/console.warn (str "No event handler found for id " id))))})
-
-(defn wrap-db [db handler]
-  (fn [event]
-    (swap! db handler event)))
 
 (defn synth-result-handler
   [db event]
@@ -38,6 +33,10 @@
   [db event]
   (js/console.warn "Synth error" (pr-str event))
   db)
+
+(defn wrap-db [db handler]
+  (fn [event]
+    (swap! db handler event)))
 
 (defmethod ig/init-key :app/db-handler [_ {:keys [db handler]}]
   (wrap-db db handler))
@@ -62,23 +61,32 @@
   db)
 
 (def events
-  {:synth/start start-synth
-   :synth/stop stop-synth
+  {:synth/start         start-synth
+   :synth/stop          stop-synth
    :synth/set-frequency set-frequency})
 
 (defn config []
-  {:app/db {}
-   [:app/db-handler :synth/result-handler] {:db (ig/ref :app/db)
-                                              :handler synth-result-handler}
-   [:app/db-handler :synth/error-handler] {:db (ig/ref :app/db)
-                                             :handler synth-error-handler}
-   :rehook/reframe {:db  (ig/ref :app/db)
-                    :ctx {:synth (ig/ref :reax/synth)}
-                    :subscriptions subscriptions
-                    :events events}
-   [:reax/module :reax/synth] {:class-name     "Synth"
-                                 :result-handler (ig/ref :synth/result-handler)
-                                 :error-handler  (ig/ref :synth/error-handler)}})
+  {;; The atom housing our application state.
+   :app/db                                 {} ;; <--- initial app state
+
+   ;; A naive re-frame impl using rehook
+   :rehook/reframe                         {:db            (ig/ref :app/db) ;; <-- the database re-frame is operating on.
+                                            :ctx           {:synth (ig/ref :reax/synth)} ;; <-- ctx passed into our events
+                                            :subscriptions subscriptions ;; <-- all available subscriptions. call (dev/subscriptions) to see list
+                                            :events        events} ;; <-- all available events. call (dev/events) to see list
+
+   ;; The result handler for our synth
+   [:app/db-handler :synth/result-handler] {:db      (ig/ref :app/db)
+                                            :handler synth-result-handler}
+
+   ;; The error handler for our synth
+   [:app/db-handler :synth/error-handler]  {:db      (ig/ref :app/db)
+                                            :handler synth-error-handler}
+
+   ;; A reax module for our synth
+   [:reax/module :reax/synth]              {:class-name     "Synth" ;; <-- the objc class of our reax module
+                                            :result-handler (ig/ref :synth/result-handler)
+                                            :error-handler  (ig/ref :synth/error-handler)}})
 
 (defonce system
   (atom {}))
@@ -94,6 +102,10 @@
   (let [f (get-in sys [:rehook/reframe :dispatch])]
     (f event)))
 
+;; Instead of passing the entire application context to our react components
+;; we can pass our re-frame interface instead!
+;;
+;; If we update our event or subscription maps, we can simply call (dev/reload)
 (defn ig-system->app-ctx [system]
   {:dispatch  (partial dispatch system)
    :subscribe (partial subscribe system)})
