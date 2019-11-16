@@ -3,7 +3,7 @@
   <groupId>wavejumper</groupId>
   <artifactId>reax</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
   <name>reax</name>
   <description>Event driven RPC between a Swift backend and a Clojurescript front end.</description>
   <url>https://github.com/wavejumper/reax</url>
@@ -11,7 +11,7 @@
     <url>https://github.com/wavejumper/reax</url>
     <connection>scm:git:git://github.com/wavejumper/reax.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/wavejumper/reax.git</developerConnection>
-    <tag>baa97ddbd3146cfbe912f838471352bffecfa868</tag>
+    <tag>dcc42935c4897049df00a1675d31cda19fd7588a</tag>
   </scm>
   <build>
     <sourceDirectory>src</sourceDirectory>

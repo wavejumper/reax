@@ -1,6 +1,7 @@
 (ns app
   (:require [integrant.core :as ig]
             [reax.integrant]
+            [reax.core :as reax]
             [rehook.dom :refer-macros [defui]]
             [rehook.dom.native :as rehook-dom]
             [rehook.core :as rehook]
@@ -48,16 +49,22 @@
 (def subscriptions
   {:synth/playing? synth-playing?})
 
+(defn start-synth [db {:keys [synth]} _]
+  (reax/dispatch synth "startSynth" {})
+  db)
+
+(defn stop-synth [db {:keys [synth]} _]
+  (reax/dispatch synth "stopSynth" {})
+  db)
+
+(defn set-frequency [db {:keys [synth]} [frequency]]
+  (reax/dispatch synth "setFrequency" {:frequency frequency})
+  db)
+
 (def events
-  {:synth/start (fn [db _ _]
-                  db)
-
-   :synth/stop (fn [db _ _]
-                 db)
-
-   :synth/set-frequency (fn [db {:keys [synth]} [frequency]]
-                          (dispatch! synth "" {:frequench frequench})
-                          db)})
+  {:synth/start start-synth
+   :synth/stop stop-synth
+   :synth/set-frequency set-frequency})
 
 (defn config []
   {:app/db {}
@@ -109,7 +116,7 @@
          (js/setTimeout
           #(dispatch [:synth/stop])
           duration))
-       #(dispatch [:synth/stop]))
+       (constantly nil))
      [playing?])
 
     ($ :View {:style {:flex           1
@@ -120,8 +127,8 @@
           ($ :Text {} (str "Frequency (" frequency ")"))
           ($ Slider {:style                 {:width  200
                                              :height 40}
-                     :maximumValue          4000
-                     :minimumValue          0
+                     :maximumValue          2000
+                     :minimumValue          400
                      :value                 frequency
                      :onValueChange         #(set-frequency (long %))
                      :minimumTrackTintColor "red"
@@ -152,7 +159,7 @@
     (js/console.log (str "Re-rendering root component: " n))
     (rehook-dom/bootstrap ctx identity clj->js app)))
 
-(defn ^:dev/after-load relaod []
+(defn ^:dev/after-load render []
   (swap! reload-trigger inc))
 
 (defn main []
