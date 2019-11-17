@@ -135,7 +135,7 @@
 
        ($ :View {:style {}}
           ($ :Text {} (str "Frequency (" frequency ")"))
-          ($ Slider {:reax/id               :set-frequency
+          ($ Slider {:rehook/id             :set-frequency
                      :style                 {:width  200
                                              :height 40}
                      :maximumValue          2000
@@ -147,7 +147,7 @@
 
        ($ :View {}
           ($ :Text {} (str "Duration (" duration " ms)"))
-          ($ Slider {:reax/id               :set-duration
+          ($ Slider {:rehook/id             :set-duration
                      :style                 {:width  200
                                              :height 40}
                      :maximumValue          4000
@@ -158,13 +158,13 @@
                      :minimumTrackTintColor "red"
                      :maximumTrackTintColor "green"}))
 
-       ($ :Button {:title (if playing?
-                            "Stop"
-                            "Start")
-                   :reax/id :start-stop
-                   :onPress #(if playing?
-                               (dispatch [:synth/stop])
-                               (dispatch [:synth/start]))}))))
+       ($ :Button {:title     (if playing?
+                                "Stop"
+                                "Start")
+                   :rehook/id :start-stop
+                   :onPress   #(if playing?
+                                 (dispatch [:synth/stop])
+                                 (dispatch [:synth/start]))}))))
 
 (defn dominant-component []
   (let [[n _] (rehook/use-atom reload-trigger)

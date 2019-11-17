@@ -64,3 +64,4 @@ buck-out/
 .shadow-cljs/
 *.iml
 app/
+target/

@@ -1,4 +1,4 @@
-{:deps {:aliases [:dev]}
+{:deps true
  :nrepl {:port 9000}
 
  :builds
