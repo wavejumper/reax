@@ -12,6 +12,7 @@
 (defmethod ig/init-key :app/db [_ initial-state]
   (atom initial-state))
 
+;; a very naive re-frame impl containing just subscriptions and events
 (defmethod ig/init-key :rehook/reframe
   [_ {:keys [db ctx subscriptions events]}]
   {:subscriptions subscriptions
@@ -103,7 +104,7 @@
     (f event)))
 
 ;; Instead of passing the entire application context to our react components
-;; we can pass our re-frame interface instead!
+;; we can pass our re-frame like interface instead!
 ;;
 ;; If we update our event or subscription maps, we can simply call (dev/reload)
 (defn ig-system->app-ctx [system]
@@ -172,7 +173,7 @@
     (js/console.log (str "Re-rendering root component: " n))
     (rehook-dom/bootstrap ctx identity clj->js app)))
 
-(defn ^:dev/after-load render []
+(defn ^:dev/after-load reload []
   (swap! reload-trigger inc))
 
 (defn main []
