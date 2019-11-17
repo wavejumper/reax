@@ -107,8 +107,8 @@
 ;;
 ;; If we update our event or subscription maps, we can simply call (dev/reload)
 (defn ig-system->app-ctx [system]
-  {:dispatch  (partial dispatch system)
-   :subscribe (partial subscribe system)})
+  {:dispatch   (partial dispatch system)
+   :subscribe  (partial subscribe system)})
 
 (defui app
   [{:keys [dispatch subscribe]} _ $]
@@ -125,9 +125,7 @@
     (rehook/use-effect
      (fn []
        (when playing?
-         (js/setTimeout
-          #(dispatch [:synth/stop])
-          duration))
+         (js/setTimeout #(dispatch [:synth/stop]) duration))
        (constantly nil))
      [playing?])
 
@@ -137,7 +135,8 @@
 
        ($ :View {:style {}}
           ($ :Text {} (str "Frequency (" frequency ")"))
-          ($ Slider {:style                 {:width  200
+          ($ Slider {:reax/id               :set-frequency
+                     :style                 {:width  200
                                              :height 40}
                      :maximumValue          2000
                      :minimumValue          400
@@ -148,7 +147,8 @@
 
        ($ :View {}
           ($ :Text {} (str "Duration (" duration " ms)"))
-          ($ Slider {:style                 {:width  200
+          ($ Slider {:reax/id               :set-duration
+                     :style                 {:width  200
                                              :height 40}
                      :maximumValue          4000
                      :minimumValue          0
@@ -161,6 +161,7 @@
        ($ :Button {:title (if playing?
                             "Stop"
                             "Start")
+                   :reax/id :start-stop
                    :onPress #(if playing?
                                (dispatch [:synth/stop])
                                (dispatch [:synth/start]))}))))
