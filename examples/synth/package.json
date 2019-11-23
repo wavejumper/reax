@@ -12,6 +12,9 @@
   "dependencies": {
     "@react-native-community/slider": "^2.0.5",
     "react": "16.9.0",
+    "react-error-boundary": "^1.2.5",
+    "react-frame-component": "^4.1.1",
+    "react-highlight": "^0.12.0",
     "react-native": "0.61.2"
   },
   "devDependencies": {

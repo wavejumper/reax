@@ -1,7 +1,6 @@
 (ns app-test
   (:require [app :as app]
-            [cljs.test :refer-macros [deftest testing is]]
-            [rehook.test :as rehook.test]
+            [rehook.test :as rehook.test :refer-macros [defuitest is io initial-render next-render]]
             [integrant.core :as ig]))
 
 (defmulti mock-reax-module (fn [id result-handler error-handler] id))
@@ -28,21 +27,28 @@
   (app/ig-system->app-ctx
    (ig/init (test-config))))
 
-(deftest app-component--start-stop
-  (let [scenes (rehook.test/init-scenes (test-ctx) identity clj->js app/app)
-        scene1 (rehook.test/play-scenes! scenes)]
+(defuitest app-component--start-stop
+  [scenes {:system      test-ctx
+           :system/args []
+           :shutdown-f  identity
+           :ctx-f       identity
+           :props-f     identity
+           :component   app/app}]
 
-    (testing "Button should initially render 'Start'"
-      (is (= "Start" (rehook.test/get-prop scene1 :start-stop :title))))
+  (-> (initial-render scenes
+        (is "Button should initially render 'Start'"
+          (rehook.test/get-prop :start-stop :title))
 
-    (rehook.test/invoke-prop scene1 :start-stop :onPress {})
+        (io "Pressing start button"
+          (rehook.test/invoke-prop :start-stop :onPress {})))
 
-    (testing "After pressing button, button should render 'Stop'"
-      (let [scene2 (rehook.test/play-scenes! scenes scene1)]
-        (is (= "Stop" (rehook.test/get-prop scene2 :start-stop :title)))
+      (next-render
+       (is "After pressing 'Start', button should render 'Stop'"
+         (= "Stop" (rehook.test/get-prop :start-stop :title)))
 
-        (rehook.test/invoke-prop scene2 :start-stop :onPress {})
+       (io "Pressing stop button"
+         (rehook.test/invoke-prop :start-stop :onPress {})))
 
-        (testing "After pressing button again, button should render 'Start'"
-          (let [scene3 (rehook.test/play-scenes! scenes scene1)]
-            (is (= "Start" (rehook.test/get-prop scene3 :start-stop :title)))))))))
+      (next-render
+       (is "After pressing button again, button should render 'Start'"
+         (= "Start" (rehook.test/get-prop :start-stop :title))))))

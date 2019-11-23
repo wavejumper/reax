@@ -6,7 +6,4 @@
            org.clojure/clojurescript {:mvn/version "1.10.520"}
            integrant                 {:mvn/version "0.7.0"}
            wavejumper/reax           {:mvn/version "1.2.0"}
-           wavejumper/rehook-dom     {:mvn/version "1.1.8"}
-           wavejumper/rehook         {:mvn/version "1.0.0"}
-           wavejumper/rehook-test    {:git/url "https://github.com/wavejumper/rehook-test"
-                                      :sha     "52d6f495ff409a3882aba875655a5c31492ff658"}}}
+           rehook                    {:mvn/version "2.0.1"}}}

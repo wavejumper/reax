@@ -112,7 +112,7 @@
    :subscribe  (partial subscribe system)})
 
 (defui app
-  [{:keys [dispatch subscribe]} _ $]
+  [{:keys [dispatch subscribe]} _]
   (let [playing?                  (subscribe [:synth/playing?])
         [frequency set-frequency] (rehook/use-state 400)
         [duration set-duration]   (rehook/use-state 250)]
@@ -130,42 +130,42 @@
        (constantly nil))
      [playing?])
 
-    ($ :View {:style {:flex           1
-                      :justifyContent "center"
-                      :alignItems     "center"}}
+    [:View {:style {:flex           1
+                    :justifyContent "center"
+                    :alignItems     "center"}}
 
-       ($ :View {:style {}}
-          ($ :Text {} (str "Frequency (" frequency ")"))
-          ($ Slider {:rehook/id             :set-frequency
-                     :style                 {:width  200
-                                             :height 40}
-                     :maximumValue          2000
-                     :minimumValue          400
-                     :value                 frequency
-                     :onValueChange         #(set-frequency (long %))
-                     :minimumTrackTintColor "red"
-                     :maximumTrackTintColor "green"}))
+     [:View {:style {}}
+      [:Text {} (str "Frequency (" frequency ")")]
+      [Slider {:rehook/id             :set-frequency
+               :style                 {:width  200
+                                       :height 40}
+               :maximumValue          2000
+               :minimumValue          400
+               :value                 frequency
+               :onValueChange         #(set-frequency (long %))
+               :minimumTrackTintColor "red"
+               :maximumTrackTintColor "green"}]]
 
-       ($ :View {}
-          ($ :Text {} (str "Duration (" duration " ms)"))
-          ($ Slider {:rehook/id             :set-duration
-                     :style                 {:width  200
-                                             :height 40}
-                     :maximumValue          4000
-                     :minimumValue          0
-                     :disabled              playing?
-                     :value                 duration
-                     :onValueChange         #(set-duration (long %))
-                     :minimumTrackTintColor "red"
-                     :maximumTrackTintColor "green"}))
+     [:View {}
+      [:Text {} (str "Duration (" duration " ms)")]
+      [Slider {:rehook/id             :set-duration
+               :style                 {:width  200
+                                       :height 40}
+               :maximumValue          4000
+               :minimumValue          0
+               :disabled              playing?
+               :value                 duration
+               :onValueChange         #(set-duration (long %))
+               :minimumTrackTintColor "red"
+               :maximumTrackTintColor "green"}]]
 
-       ($ :Button {:title     (if playing?
-                                "Stop"
-                                "Start")
-                   :rehook/id :start-stop
-                   :onPress   #(if playing?
-                                 (dispatch [:synth/stop])
-                                 (dispatch [:synth/start]))}))))
+     [:Button {:title     (if playing?
+                            "Stop"
+                            "Start")
+               :rehook/id :start-stop
+               :onPress   #(if playing?
+                             (dispatch [:synth/stop])
+                             (dispatch [:synth/start]))}]]))
 
 (defn dominant-component []
   (let [[n _] (rehook/use-atom reload-trigger)
